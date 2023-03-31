@@ -18,6 +18,7 @@ import traceback
 
 import urllib.parse
 from http.server import HTTPServer, BaseHTTPRequestHandler
+import missing
 import plots
 
 class UIRequestHandler(BaseHTTPRequestHandler):
@@ -154,6 +155,15 @@ class UIRequestHandler(BaseHTTPRequestHandler):
 			except Exception as e:
 				self.send_error(500, explain=traceback.format_exc().encode('utf-8'))
 				return
+
+		elif self.path == "/missing":
+			ret = missing.get_missing_text().encode('utf-8')
+			self.send_response(200)
+			self.send_header("Content-Length", len(ret))
+			self.send_header("Content-Type", "text/plain;charset=utf-8")
+			self.end_headers()
+			self.wfile.write(ret)
+			return
 
 		self.send_error(403)
 

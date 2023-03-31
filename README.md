@@ -85,14 +85,19 @@ Datasheets
 Battery Life
 ------------
 
-I tested 22 sensors connecting every minute in my house: the room temperature
-sensors lasted 17-18 days, a sensor placed outdoors which saw daily temps
-30F - 55F lasted 10 days, a sensor in my 40F refrigerator lasted 12 days, and a
-sensor in my -5F freezer lasted 6 days.
+Connecting every single minute:
 
-With the new code that stores readings in NVS and turns the wifi on much less
-frequently, the battery life will be much longer: hopefully it will scale more
-or less linearly, I'm currently testing 5-minute reporting intervals.
+	* 17-18 days at room temperature
+	* 12 days at 40F
+	* 6 days at -5F
+
+Connecting every six minutes:
+
+	* 68-70 days at room temperature
+	* 60 days at 40F
+	* 28 days at -5F
+
+I'm currently testing 60-minute reporting intervals.
 
 TODO
 ----
