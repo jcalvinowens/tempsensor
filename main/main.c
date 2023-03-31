@@ -548,6 +548,14 @@ static esp_err_t phone_home(const char *str, const char *serial_str,
 		esp_ota_mark_app_valid_cancel_rollback();
 	}
 
+	tmp = cJSON_GetObjectItem(root, "wait_for_ntp_sync");
+	if (tmp && cJSON_IsTrue(tmp)) {
+		ESP_LOGI(TAG, "Will wait for NTP sync as commanded...");
+
+		while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED)
+			delay_ms(10);
+	}
+
 	cJSON_Delete(root);
 	esp_http_client_cleanup(handle);
 	return ESP_OK;
