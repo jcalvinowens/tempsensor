@@ -835,7 +835,7 @@ void app_main(void)
 	if (have_queued_samples) {
 		nvs_handle_t nvsh;
 
-		if (nvs_open("data", NVS_READWRITE, &nvsh) == ESP_OK) {
+		if (nvs_open("data", NVS_READONLY, &nvsh) == ESP_OK) {
 			ret = nvs_entry_find("nvs", "data", NVS_TYPE_U64, &it);
 			while (ret == ESP_OK) {
 				struct nvsdata64 sample;
@@ -843,7 +843,6 @@ void app_main(void)
 
 				nvs_entry_info(it, &info);
 				nvs_get_u64(nvsh, info.key, &sample.u64);
-				nvs_erase_key(nvsh, info.key);
 
 				d = cJSON_CreateObject();
 				cJSON_AddNumberToObject(d, "epoch",
@@ -858,7 +857,6 @@ void app_main(void)
 			}
 
 			nvs_release_iterator(it);
-			nvs_commit(nvsh);
 			nvs_close(nvsh);
 		}
 	}
@@ -885,6 +883,29 @@ void app_main(void)
 	esp_wifi_disconnect();
 	esp_wifi_stop();
 	esp_wifi_deinit();
+
+	/*
+	 * If we successfully submitted the queued data, delete it.
+	 */
+
+	if (have_queued_samples && ret == ESP_OK) {
+		nvs_handle_t nvsh;
+
+		if (nvs_open("data", NVS_READWRITE, &nvsh) == ESP_OK) {
+			ret = nvs_entry_find("nvs", "data", NVS_TYPE_U64, &it);
+			while (ret == ESP_OK) {
+				nvs_entry_info_t info;
+
+				nvs_entry_info(it, &info);
+				nvs_erase_key(nvsh, info.key);
+				ret = nvs_entry_next(&it);
+			}
+
+			nvs_release_iterator(it);
+			nvs_commit(nvsh);
+			nvs_close(nvsh);
+		}
+	}
 
 	/*
 	 * If we have a target wake time, compute how long we should sleep.
