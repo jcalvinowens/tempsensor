@@ -343,33 +343,14 @@ class SensorRequestHandler(BaseHTTPRequestHandler):
 				send_delay_us = int(jsond["send_delay_us"])
 				retries = int(jsond.get("retries", 0))
 				wifi_retries = int(jsond.get("wifi_retries", 0))
-
-				# FIXME COMPAT 45b3c95f7b05d70e
-				try:
-					data = jsond["data"]
-				except:
-					data = None
-					epoch = int(jsond["epoch"])
-					temp = int(jsond["temperature"])
-					humi = int(jsond["humidity"])
+				data = jsond["data"]
 
 			except Exception as e:
 				self.send_error(400, explain=traceback.format_exc().encode('utf-8'))
 				return
 
-			# FIXME COMPAT 45b3c95f7b05d70e
-			if data is None:
-				data = [
-					{
-						"epoch": epoch,
-						"temperature": temp,
-						"humidity": humi,
-					},
-				]
-
 			rxtime = int(time.time())
 			rjsond = {
-				"ack": True, # FIXME COMPAT 45b3c95f7b05d70e
 				"next_epoch": (rxtime // 60 + 1) * 60,
 				"queue_interval": 60,
 				"queue_count": 5,
