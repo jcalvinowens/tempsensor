@@ -791,7 +791,7 @@ void app_main(void)
 
 	sntp_set_sync_mode(SNTP_SYNC_MODE_IMMED);
 	sntp_setoperatingmode(SNTP_OPMODE_POLL);
-	sntp_setservername(0, "adams.vkv.me");
+	sntp_setservername(0, CONFIG_NTP_SERVER_HOSTNAME);
 	sntp_init();
 
 	if (now < UNREASONABLY_LONG_AGO)

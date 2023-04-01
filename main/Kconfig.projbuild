@@ -11,8 +11,13 @@ menu "Temperature/Humidity Sensor Configuration"
 			PSK for the wireless network.
 
 	config PHONE_HOME_TGT
-		string "Phone home address/port"
+		string "Phone home hostname/port"
 		help
 			Backend location ("srv001.somewhere.com:4443").
+
+	config NTP_SERVER_HOSTNAME
+		string "NTP server hostname"
+		help
+			NTP server ("pool.ntp.org").
 
 endmenu

@@ -1,17 +1,17 @@
 
-ESP32C3 Temperature Sensor
+ESP32-C3 Temperature Sensor
 ==========================
 
-This repo contains the hardware design, firmware, and HTTP backend for a small
-battery powered wifi temperature/humidity sensor.
+This repository contains the hardware design, firmware, and HTTP backend for a
+small battery powered WiFi temperature and humidity sensor.
 
 ![](img/front.jpg)
 
-The firmware is written in C, using ESP-IDF (which is based on FreeRTOS).
+The firmware is written in C, using ESP-IDF, which is based on FreeRTOS.
 
-The backend is written in Python, using the native HTTP and sqlite3 support. It
-has no arbitrary limit on the number of sensors it can support, and uses gnuplot
-to render graphs and serve them over HTTPS:
+The backend is written in Python, using the native HTTPS and sqlite3 support. It
+supports an unlimited number of sensors, and uses gnuplot to render graphs and
+serve them over HTTPS:
 
 ![](img/graph.png)
 
@@ -36,6 +36,8 @@ The board has two 3.3V power supplies: an LDO and a switcher. The switcher is
 much more efficient than the LDO, but has a high quiescent current draw (~1mA),
 so it is enabled via a GPIO only when the wifi is turned on.
 
+![](img/frontback.jpg)
+
 I more or less followed the [ESP32-C3 design guidelines](https://www.espressif.com/sites/default/files/documentation/esp32-c3_hardware_design_guidelines_en.pdf)
 when laying out the board, with the exception of RF impedence matching. The RF
 trace and my antennas are all 50 Ohm, which, with the 35 Ohm LNA output, results
@@ -45,6 +47,8 @@ it wasn't worth the money.
 I used small laptop syle wifi antennas, which are easy to find in bulk for cheap
 nowadays if they aren't compatible with 5GHz. Because they log signal strength,
 the sensors will be useful for future experimentation with PCB antenna designs.
+
+![](img/longfrontback.jpg)
 
 To avoid the "thundering herd" problem, each sensor has a unique "send delay"
 assigned by the backend, so the wifi connections and POSTs can be splayed while
@@ -59,17 +63,15 @@ four 4K sectors for NVS, so we get 400K 4K cycles total. Each 4K sector can hold
 worrying about wearing out the flash. At one measurement per minute, that would
 take 95 years! I think we'll be okay...
 
+![](img/prog.jpg)
+
 The board is programmed via pogo pads. I spaced the pads to match a pogo clip I
 ordered online, but it turned out the spacing was different than advertised...
 so I had to kludge something together myself to match the boards I already had.
 
-![](img/pogo.jpg)
-
 In retrospect, I could've made my life easier by avoiding routing in-between the
 pads so they could be bigger. Even as is, holding the pogo pins on with my
 thumb wasn't a problem at all.
-
-![](img/prog.jpg)
 
 Datasheets
 ----------
@@ -87,17 +89,17 @@ Battery Life
 
 Connecting every single minute:
 
-	* 17-18 days at room temperature
-	* 12 days at 40F
-	* 6 days at -5F
+* 17-18 days at room temperature
+* 12 days at 40F
+* 6 days at -5F
 
 Connecting every six minutes:
 
-	* 68-70 days at room temperature
-	* 60 days at 40F
-	* 28 days at -5F
+* 68-70 days at room temperature
+* 60 days at 40F
+* 28 days at -5F
 
-I'm currently testing 60-minute reporting intervals.
+I'm currently testing 61-minute reporting intervals.
 
 TODO
 ----
