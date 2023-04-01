@@ -1,0 +1,18 @@
+menu "Temperature/Humidity Sensor Configuration"
+
+	config WIFI_SSID
+		string "Wifi SSID"
+		help
+			SSID sensors should connect to.
+
+	config WIFI_PSK
+		string "Wifi PSK"
+		help
+			PSK for the wireless network.
+
+	config PHONE_HOME_TGT
+		string "Phone home address/port"
+		help
+			Backend location ("srv001.somewhere.com:4443").
+
+endmenu
