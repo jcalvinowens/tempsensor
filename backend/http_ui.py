@@ -126,11 +126,11 @@ class UIRequestHandler(BaseHTTPRequestHandler):
 				}.get(extension, ("svg", "image/svg+xml"))
 
 				if ttype == "dumb":
-					x = 95
-					y = 32
+					x = querydict.get("x", 95)
+					y = querydict.get("y", 32)
 				else:
-					x = 800
-					y = 800
+					x = querydict.get("x", 800)
+					y = querydict.get("y", 800)
 
 				plotdata = {
 					"temp": self.gnuplot_temperature,
