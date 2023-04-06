@@ -41,14 +41,15 @@ from http_ui import UIHTTPServer, UIRequestHandler
 # source directory (main/). If you use an authority, use their root cert chain.
 
 def sensor_worker(db_lock, locs_lock, addr, ssl_cert, ssl_key, fw_sha, fw_blob,
-		  fw_url, sock):
+		  fw_url, beta_fw_sha, beta_fw_blob, beta_fw_url, sock):
 	"""
 	Worker process that handles requests from the actual sensors.
 	"""
 	httpd = SensorHTTPServer(addr, SensorRequestHandler,
 				 "data.db", db_lock,
 				 "locations.json", locs_lock,
-				 fw_sha, fw_blob, fw_url)
+				 fw_sha, fw_blob, fw_url,
+				 beta_fw_sha, beta_fw_blob, beta_fw_url)
 
 	sslctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 	sslctx.load_cert_chain(
@@ -78,6 +79,8 @@ def ui_worker(addr, ssl_cert, ssl_key, sock):
 parser = argparse.ArgumentParser()
 parser.add_argument("--fw", type=str, help="Path to FW binary", required=True)
 parser.add_argument("--elf", type=str, help="Path to ELF file", required=True)
+parser.add_argument("--beta-fw", type=str, help="Path to FW binary", required=False)
+parser.add_argument("--beta-elf", type=str, help="Path to ELF file", required=False)
 parser.add_argument("--dst", type=str, help="Server hostname", required=True)
 parser.add_argument("--ssl-cert", type=str, help="SSL Certificate", required=True)
 parser.add_argument("--ssl-key", type=str, help="SSL Key", required=True)
@@ -93,6 +96,21 @@ with open(ARGS.elf, "rb") as f:
 
 with open(ARGS.fw, "rb") as f:
 	CURRENT_FW_BLOB = f.read()
+
+CURRENT_FW_URL = f"https://{ARGS.dst}:{ARGS.sensor_port}/fw/{CURRENT_FW_SHA}"
+
+BETA_FW_SHA = None
+BETA_FW_BLOB = None
+BETA_FW_URL = None
+
+if ARGS.beta_elf or ARGS.beta_fw:
+	with open(ARGS.beta_elf, "rb") as f:
+		BETA_FW_SHA = hashlib.sha256(f.read()).hexdigest()[:16]
+
+	with open(ARGS.beta_fw, "rb") as f:
+		BETA_FW_BLOB = f.read()
+
+	BETA_FW_URL = f"https://{ARGS.dst}:{ARGS.sensor_port}/fw/{BETA_FW_SHA}"
 
 sensor_socks = [
 	socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -133,7 +151,10 @@ for sock in sensor_socks:
 			ARGS.ssl_key,
 			CURRENT_FW_SHA,
 			CURRENT_FW_BLOB,
-			f"https://{ARGS.dst}:{ARGS.sensor_port}/fw/{CURRENT_FW_SHA}",
+			CURRENT_FW_URL,
+			BETA_FW_SHA,
+			BETA_FW_BLOB,
+			BETA_FW_URL,
 			sock,
 		),
 	).start()

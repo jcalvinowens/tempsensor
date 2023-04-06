@@ -40,16 +40,23 @@ class SensorRequestHandler(BaseHTTPRequestHandler):
 
 	def do_GET(self):
 		if self.path.startswith("/fw/"):
-			if not self.path.endswith(self.server.fw_sha):
-				self.send_error(404)
+			if self.path.endswith(self.server.fw_sha):
+				self.send_response(200)
+				self.send_header("Content-Length", len(self.server.fw_blob))
+				self.send_header("Content-Type", "application/octet-stream")
+				self.end_headers()
+				self.wfile.write(self.server.fw_blob)
 				return
 
-			self.send_response(200)
-			self.send_header("Content-Length", len(self.server.fw_blob))
-			self.send_header("Content-Type", "application/octet-stream")
-			self.end_headers()
-			self.wfile.write(self.server.fw_blob)
-			return
+			elif self.path.endswith(self.server.beta_fw_sha):
+				self.send_response(200)
+				self.send_header("Content-Length", len(self.server.beta_fw_blob))
+				self.send_header("Content-Type", "application/octet-stream")
+				self.end_headers()
+				self.wfile.write(self.server.beta_fw_blob)
+				return
+
+			self.send_error(404)
 
 		self.send_error(403)
 
@@ -94,14 +101,18 @@ class SensorRequestHandler(BaseHTTPRequestHandler):
 			if "outdoor" in location.lower():
 				rjsond["queue_count"] = 5
 
-			if location.startswith("(") and location.endswith(")"):
-				rjsond["queue_count"] = 0
-
 			if send_delay_us != want_send_delay_us:
 				rjsond["next_send_delay_us"] = want_send_delay_us
 
 			if sha != self.server.fw_sha:
 				rjsond["new_fw"] = self.server.new_fw_url
+
+			if location.startswith("(") and location.endswith(")"):
+				if self.server.beta_fw_sha is not None:
+					if sha != self.server.beta_fw_sha:
+						rjsond["new_fw"] = self.server.beta_fw_url
+
+				rjsond["queue_count"] = 0
 
 			self.server.insert_db(sha, ser, rxtime,
 				  ":".join(str(x) for x in self.client_address),
@@ -124,7 +135,8 @@ class SensorHTTPServer(HTTPServer):
 	"""
 
 	def __init__(self, server_address, request_handler_class, db_path,
-		     db_lock, locs_path, locs_lock, fw_sha, fw_blob, fw_url):
+		     db_lock, locs_path, locs_lock, fw_sha, fw_blob, fw_url,
+		     beta_fw_sha, beta_fw_blob, beta_fw_url):
 		super().__init__(server_address, request_handler_class,
 				 bind_and_activate=False)
 
@@ -135,6 +147,9 @@ class SensorHTTPServer(HTTPServer):
 		self.fw_sha = fw_sha
 		self.fw_blob = fw_blob
 		self.fw_url = fw_url
+		self.beta_fw_sha = beta_fw_sha
+		self.beta_fw_blob = beta_fw_blob
+		self.beta_fw_url = beta_fw_url
 		self.LOCS_MTIME = 0
 
 	def init_db(self):
