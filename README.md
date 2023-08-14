@@ -87,19 +87,29 @@ Datasheets
 Battery Life
 ------------
 
-Connecting every single minute:
+Battery testing is performed using a stockpile of "Energizer EN92 Industrial"
+AAA batteries manufactured in 2022. No OTA updates were issued during the
+testing periods.
+
+1-minute measurements, connecting every single minute:
 
 * 17-18 days at room temperature
 * 12 days at 40F
 * 6 days at -5F
 
-Connecting every six minutes:
+1-minute measurements, connecting every six minutes:
 
 * 68-70 days at room temperature
 * 60 days at 40F
 * 28 days at -5F
 
-I'm currently testing 61-minute reporting intervals.
+1-minute measurements, connecting once each hour:
+
+* 140-157 days at room temperature
+* 130 days at 40F
+* 68 days at -5F
+
+I'm currently testing 5-minute measurements connecting once every five hours.
 
 TODO
 ----

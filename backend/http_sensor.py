@@ -91,14 +91,15 @@ class SensorRequestHandler(BaseHTTPRequestHandler):
 
 			rxtime = int(time.time())
 			rjsond = {
-				"next_epoch": (rxtime // 60 + 1) * 60,
-				"queue_interval": 60,
+				"next_epoch": (rxtime // 60 + 5) * 60,
+				"queue_interval": 300,
 				"queue_count": 60,
 			}
 
 			location, want_send_delay_us = self.server.lookup_location(ser)
 
 			if "outdoor" in location.lower():
+				rjsond["queue_interval"] = 60
 				rjsond["queue_count"] = 5
 
 			if send_delay_us != want_send_delay_us:
