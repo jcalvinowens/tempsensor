@@ -50,11 +50,14 @@ class UIRequestHandler(BaseHTTPRequestHandler):
 			self.wfile.write(explain)
 
 	def gnuplot_temperature(self, ext, start_epoch, end_epoch, x, y, locs=None):
+		xtics = (end_epoch - start_epoch) // 6
+
 		xarr = [
 			plots.gnuplot_preamble(ext or "svg", x, y),
 			plots.gnuplot_colors(),
 			plots.gnuplot_plot_preamble("Temperature Sensor Data",
-						    "UTC Time", "Temperature (F)"),
+						    "UTC Time", "Temperature (F)",
+						    xtics=xtics),
 		]
 
 		if locs is None or (len(locs) == 1 and locs[0] == ''):
@@ -69,11 +72,14 @@ class UIRequestHandler(BaseHTTPRequestHandler):
 		return plots.gnuplot(*xarr)
 
 	def gnuplot_humidity(self, ext, start_epoch, end_epoch, x, y, locs=None):
+		xtics = (end_epoch - start_epoch) // 6
+
 		xarr = [
 			plots.gnuplot_preamble(ext or "svg", x, y),
 			plots.gnuplot_colors(),
 			plots.gnuplot_plot_preamble("Humidity Sensor Data",
-					      "UTC Time", "Relative Humidity (%)"),
+					      "UTC Time", "Relative Humidity (%)",
+					      xtics=xtics),
 		]
 
 		if locs is None or (len(locs) == 1 and locs[0] == ''):
