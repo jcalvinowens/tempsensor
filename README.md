@@ -5,7 +5,7 @@ ESP32-C3 Temperature Sensor
 This repository contains the hardware design, firmware, and HTTP backend for a
 small battery powered WiFi temperature and humidity sensor.
 
-![](img/front.jpg)
+![](https://static.wbinvd.org/img/tempsensor/front.jpg)
 
 The firmware is written in C, using ESP-IDF, which is based on FreeRTOS.
 
@@ -13,7 +13,7 @@ The backend is written in Python, using the native HTTPS and sqlite3 support. It
 supports an unlimited number of sensors, and uses gnuplot to render graphs and
 serve them over HTTPS:
 
-![](img/graph.png)
+![](https://static.wbinvd.org/img/tempsensor/graph.png)
 
 The system supports over-the-air firmware updates, using two partitions with a
 fallback to the old firmware if the first POST is unsuccessful.
@@ -36,7 +36,7 @@ The board has two 3.3V power supplies: an LDO and a switcher. The switcher is
 much more efficient than the LDO, but has a high quiescent current draw (~1mA),
 so it is enabled via a GPIO only when the wifi is turned on.
 
-![](img/frontback.jpg)
+![](https://static.wbinvd.org/img/tempsensor/frontback.jpg)
 
 I more or less followed the [ESP32-C3 design guidelines](https://www.espressif.com/sites/default/files/documentation/esp32-c3_hardware_design_guidelines_en.pdf)
 when laying out the board, with the exception of RF impedence matching. The RF
@@ -48,7 +48,7 @@ I used small laptop syle wifi antennas, which are easy to find in bulk for cheap
 nowadays if they aren't compatible with 5GHz. Because they log signal strength,
 the sensors will be useful for future experimentation with PCB antenna designs.
 
-![](img/longfrontback.jpg)
+![](https://static.wbinvd.org/img/tempsensor/longfrontback.jpg)
 
 To avoid the "thundering herd" problem, each sensor has a unique "send delay"
 assigned by the backend, so the wifi connections and POSTs can be splayed while
@@ -63,7 +63,7 @@ four 4K sectors for NVS, so we get 400K 4K cycles total. Each 4K sector can hold
 worrying about wearing out the flash. At one measurement per minute, that would
 take 95 years! I think we'll be okay...
 
-![](img/prog.jpg)
+![](https://static.wbinvd.org/img/tempsensor/prog.jpg)
 
 The board is programmed via pogo pads. I spaced the pads to match a pogo clip I
 ordered online, but it turned out the spacing was different than advertised...
@@ -129,6 +129,6 @@ Cost
 I had 30 rev 2.0 PCBs manufactured by JLCPCB in November 2022: the total cost
 including shipping was $13.80/each (4-layer, ENIG, two-sided assembly, DHL).
 
-![](img/lot.jpg)
+![](https://static.wbinvd.org/img/tempsensor/lot.jpg)
 
 Using the pogo pads, I was able to flash all 30 in under half an hour!
