@@ -13,7 +13,7 @@ The backend is written in Python, using the native HTTPS and sqlite3 support. It
 supports an unlimited number of sensors, and uses gnuplot to render graphs and
 serve them over HTTPS:
 
-![](https://static.wbinvd.org/img/tempsensor/graph.png)
+![](https://static.wbinvd.org/img/tempsensor/graph.jpg)
 
 The system supports over-the-air firmware updates, using two partitions with a
 fallback to the old firmware if the first POST is unsuccessful.
