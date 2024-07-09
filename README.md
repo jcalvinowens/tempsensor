@@ -109,7 +109,15 @@ testing periods.
 * 130 days at 40F
 * 68 days at -5F
 
-I'm currently testing 5-minute measurements connecting once every five hours.
+5-minute measurements, connecting every five hours:
+
+* 11-12 months at room temperature
+* 6-7 months at 40F
+* 4-5 months at -5F
+
+Multiple power outages occurred during the final year of testing. Since the wifi
+retry behavior is extremely aggressive, these results very likely underestimate
+the possible battery life under more ideal conditions.
 
 TODO
 ----
